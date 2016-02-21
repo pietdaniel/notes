@@ -1,10 +1,11 @@
+var URL = "localhost:5000"
 function post(notes) {
   postData = { "data": notes };
   $.ajax({
     async: false,
-    url: "/notes",
+    url: URL + "/notes",
     type:"POST",
-    headers: { 
+    headers: {
       "Content-Type": "application/json"
     },
     data: '{"data":"'+encodeURI(notes)+'"}',
@@ -25,8 +26,8 @@ $(document).ready(function() {
 
   setInterval(function(){
     post($('#notes').val())
-  } , 3000) 
-  
+  } , 3000)
+
   $('#notes').focusout(function(){
     post($('#notes').val());
   });
