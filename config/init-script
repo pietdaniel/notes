@@ -1,0 +1,64 @@
+#! /bin/sh
+### BEGIN INIT INFO
+# Provides:          notes
+# Short-Description: notes agent
+### END INIT INFO                                                                                                                                          
+
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+DAEMON=/home/vagrant/notes/run.sh
+DAEMON_OPTS=""
+NAME="agent"
+DESC="notes web service"
+PIDFILE="/var/run/piet-us-notes/${NAME}.pid"
+
+test -x $DAEMON || exit 0
+
+. /lib/lsb/init-functions
+
+reload_notes_agent() {
+	start-stop-daemon --stop --quiet --signal HUP --pidfile $PIDFILE 
+}
+
+start_notes_agent() {
+    start-stop-daemon --start --quiet --pidfile $PIDFILE \
+	--startas $DAEMON -- $NAME $DAEMON_OPTS
+}
+
+stop_notes_agent() {
+	start-stop-daemon --stop --retry TERM/10/KILL/5 --quiet --oknodo --pidfile $PIDFILE
+}
+
+status_notes_agent() {
+	status_of_proc -p "${PIDFILE}" "${DAEMON}" "${NAME}"
+}
+
+case "$1" in
+    start)
+	log_begin_msg "Starting $DESC"
+	start_notes_agent
+	log_end_msg $?
+	;;
+    stop)
+	log_begin_msg "Stopping $DESC"
+	stop_notes_agent
+	log_end_msg $?
+	;;
+    reload)
+    	log_begin_msg "Reloading $DESC"
+        reload_notes_agent
+    	log_end_msg $?
+    	;;
+    status)
+        status_notes_agent
+	;;
+    restart|force-reload)
+	log_begin_msg "Restarting $DESC"
+	stop_notes_agent
+	start_notes_agent
+	log_end_msg $?
+	;;
+  *)
+	echo "Usage: $0 {start|stop|status|restart|force-reload|reload}" >&2
+	exit 1
+	;;
+esac
