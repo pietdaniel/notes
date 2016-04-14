@@ -1,5 +1,5 @@
 #!/bin/bash -i
-SERVER_SCRIPT="/home/vagrant/notes/notes.py"
+SERVER_SCRIPT="/home/notes/notes/src/notes.py"
 PID_FILE="/var/run/piet-us-notes/agent.pid"
 
 python $SERVER_SCRIPT &> /dev/null &
